@@ -3,4 +3,9 @@ from .connection import get_connection
 
 def execute_query(sql):
     conn = get_connection()
-    return pd.read_sql_query(sql, conn)
+    df = pd.read_sql_query(
+        sql,
+        conn
+    )
+    conn.close()
+    return df
