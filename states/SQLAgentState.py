@@ -6,5 +6,4 @@ class SQLAgentState(TypedDict):
     schema: str
     sql_query: Optional[str]
     query_result: Optional[list]
-    insight: Optional[str]
     error: Optional[str]
