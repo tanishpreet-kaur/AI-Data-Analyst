@@ -1,5 +1,7 @@
 from .connection import get_connection
+from langfuse import observe
 
+@observe("get_schema")
 def get_schema():
     conn = get_connection()
     cursor = conn.cursor()
