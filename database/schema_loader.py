@@ -1,9 +1,8 @@
-from .connection import get_connection
+from database.connection import get_connection
 from langfuse import observe
 
 @observe("get_schema")
-def get_schema():
-    conn = get_connection()
+def get_schema(conn):
     cursor = conn.cursor()
 
     cursor.execute("""
@@ -20,15 +19,14 @@ def get_schema():
         cursor.execute(
             f"PRAGMA table_info({table_name})"
         )
-        cols = cursor.fetchall()
+        columns = cursor.fetchall()
         schema += f"\nTABLE {table_name}\n"
-        
-        for col in cols:
+
+        for col in columns:
             column_name = col[1]
             datatype = col[2]
             schema += (
                 f"  {column_name} {datatype}\n"
             )
 
-    conn.close()
     return schema
