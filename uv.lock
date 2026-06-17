@@ -27,6 +27,7 @@ dependencies = [
     { name = "langfuse" },
     { name = "langgraph" },
     { name = "pandas" },
+    { name = "pydantic" },
     { name = "python-decouple" },
     { name = "python-dotenv" },
 ]
@@ -42,6 +43,7 @@ requires-dist = [
     { name = "langfuse", specifier = ">=4.7.1" },
     { name = "langgraph", specifier = ">=1.2.5" },
     { name = "pandas", specifier = ">=3.0.3" },
+    { name = "pydantic", specifier = ">=2.13.4" },
     { name = "python-decouple", specifier = ">=3.8" },
     { name = "python-dotenv", specifier = ">=1.2.2" },
 ]
