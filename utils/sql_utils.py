@@ -7,19 +7,21 @@ def clean_sql(sql: str) -> str:
     return sql.strip()
 
 # check for forbidden SQL keywords
-FORBIDDEN = [
+FORBIDDEN = {
     "DROP",
     "DELETE",
     "UPDATE",
     "INSERT",
     "ALTER",
-    "TRUNCATE"
-]
-def validate_sql(sql):
+    "TRUNCATE",
+    "CREATE",
+    "REPLACE",
+}
+def validate_safe_sql(sql: str):
     sql_upper = sql.upper()
     for keyword in FORBIDDEN:
         if keyword in sql_upper:
             raise ValueError(
-                f"Forbidden SQL detected: {keyword}"
+                f"Forbidden SQL keyword detected: {keyword}"
             )
     return True
