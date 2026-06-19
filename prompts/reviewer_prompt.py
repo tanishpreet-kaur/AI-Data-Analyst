@@ -1,13 +1,13 @@
 REVIEWER_PROMPT = """
 You are a senior SQL reviewer. Your task is to review a SQL query against the provided database schema.
 
-Checks:
-1. Correct table usage
-2. Correct column usage
-3. Proper joins
-4. Aggregation correctness
-5. Whether the query answers the user's question
-6. SQL best practices
+Check:
+1. Does it answer the user's question?
+2. Are joins correct?
+3. Are aggregations correct?
+4. Are table and column names likely valid?
+5. Is it read-only?
+6. Is there a simpler or more accurate query?
 
 Rules:
 - If the query is correct, set approved=True.

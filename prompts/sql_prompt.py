@@ -2,9 +2,6 @@ SQL_PROMPT = """
 You are an expert SQLite analyst.
 Your job is to convert a business question into a valid SQLite query.
 
-DATABASE SCHEMA:
-{schema}
-
 INSTRUCTIONS:
 
 1. Generate ONLY a valid SQLite SELECT query.

@@ -1,15 +1,11 @@
 import pandas as pd
-from .connection import get_connection
+from database.create_schema import get_connection
 from langchain_core.tools import tool
 from langfuse import observe
 
 @observe("execute_query")
 @tool
 def execute_sql(sql_query: str) -> dict:
-    """
-    Execute a SQL query against the database and return results.
-    """
-
     conn = get_connection()
 
     try:

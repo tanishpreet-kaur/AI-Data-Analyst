@@ -5,13 +5,7 @@ def generate_sql(state):
         "messages": [
             {
                 "role": "user",
-                "content": f"""
-                    Schema:
-                    {state['schema']}
-
-                    Question:
-                    {state['question']}
-                    """
+                "content": state["question"]
             }
         ]
     })

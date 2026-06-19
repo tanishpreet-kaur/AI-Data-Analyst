@@ -1,42 +1,27 @@
 from agents.review_agent import review_agent
 
 def review_sql(state):
-    response = review_agent.invoke(
-        {
-            "messages": [
-                {
-                    "role": "user",
-                    "content": f"""
-                        Question:
-                        {state['question']}
+    review = review_agent.invoke(
+        f"""
+        User Question:
+        {state['question']}
 
-                        Schema:
-                        {state['schema']}
-
-                        SQL:
-                        {state['sql_query']}
-                        """
-                }
-            ]
-        }
+        Generated SQL:
+        {state['sql_query']}
+        """
     )
 
-    review = response["structured_response"]
-
-    if review.approved:
-        return {
-            "approved": True,
-            "review_reason": review.reason
-        }
-
     return {
-        "approved": False,
+        "approved": review.approved,
         "review_reason": review.reason,
-        "sql_query": review.corrected_sql
+        "sql_query": (
+            review.corrected_sql
+            if review.corrected_sql
+            else state["sql_query"]
+        )
     }
     
-
-def review_router(state):
+def route_after_review(state):
     if state["approved"]:
-        return "execute_query"
-    return "execute_query"
+        return "execute_sql"
+    return "sql_generator"
