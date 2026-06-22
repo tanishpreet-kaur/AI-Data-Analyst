@@ -12,9 +12,10 @@ def get_connection():
             f"Failed to connect to database: {e}"
         )
 
-@tool
 @observe
 def get_schema() -> str:
+    """Return the database schema including tables, columns and foreign keys."""
+    ...
     conn = get_connection()
 
     try:
@@ -56,3 +57,5 @@ def get_schema() -> str:
 
     finally:
         conn.close()
+        
+get_schema = tool(get_schema)

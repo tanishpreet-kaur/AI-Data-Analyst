@@ -1,9 +1,10 @@
-from typing import TypedDict, Optional
-import pandas as pd
+from typing import TypedDict, Optional, Any
 
 class SQLAgentState(TypedDict):
     question: str
-    sql_query: Optional[str]
-    approved: Optional[bool]
+    sql_query: str
+    approved: bool
     review_reason: Optional[str]
-    query_result: Optional[list]
+    retry_count: int
+    query_result: list[dict[str, Any]]
+    insights: str

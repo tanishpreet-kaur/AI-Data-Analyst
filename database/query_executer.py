@@ -1,28 +1,24 @@
-import pandas as pd
+import sqlite3
 from database.create_schema import get_connection
 from langchain_core.tools import tool
 from langfuse import observe
 
-@observe("execute_query")
-@tool
-def execute_sql(sql_query: str) -> dict:
+@observe()
+def execute_sql(sql_query: str) -> list[dict]:
+    """Execute SQL and return rows."""
+
     conn = get_connection()
 
     try:
-        df = pd.read_sql_query(sql_query, conn)
-        return {
-            "success": True,
-            "row_count": len(df),
-            "columns": df.columns.tolist(),
-            "data": df.head(20).to_dict(orient="records")
-        }
+        conn.row_factory = sqlite3.Row
 
-    except Exception as e:
-        return {
-            "success": False,
-            "error": str(e)
-        }
+        cursor = conn.cursor()
+        cursor.execute(sql_query)
+
+        return [
+            dict(row)
+            for row in cursor.fetchall()
+        ]
 
     finally:
-        if conn:
-            conn.close()
+        conn.close()

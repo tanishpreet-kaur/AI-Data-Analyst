@@ -33,25 +33,23 @@ def validate_safe_sql(sql: str) -> None:
 
 
 def validate_sqlite_query(sql: str) -> bool:
-
+    """Validate SQL syntax and schema using SQLite."""
     conn = get_connection()
-
     try:
         conn.execute(
             f"EXPLAIN QUERY PLAN {sql}"
         )
         return True
-
     except sqlite3.Error as e:
         raise ValueError(
             f"Invalid SQL: {e}"
         )
-
     finally:
         conn.close()
 
 @tool
 def validate_query(sql: str) -> bool:
+    """Validate that a SQL query is safe and syntactically correct."""
     sql = clean_sql(sql)
     validate_safe_sql(sql)
     validate_sqlite_query(sql)

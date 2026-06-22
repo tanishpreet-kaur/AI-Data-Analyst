@@ -7,7 +7,7 @@ from utils.sql_utils import validate_query
 
 review_agent = create_agent(
     model=llm,
-    prompt=REVIEWER_PROMPT,
+    system_prompt=REVIEWER_PROMPT,
     response_format=SQLReview,
     tools=[validate_query]
 )
