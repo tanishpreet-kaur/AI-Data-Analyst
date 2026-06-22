@@ -7,4 +7,7 @@ class SQLAgentState(TypedDict):
     review_reason: Optional[str]
     retry_count: int
     query_result: list[dict[str, Any]]
-    insights: str
+    answer: str
+    key_findings: str
+    chart_json: dict | None
+    chart_type: str | None

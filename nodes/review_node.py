@@ -29,7 +29,11 @@ def review_sql(state):
             if review.corrected_sql
             else state["sql_query"]
         ),
-        "retry_count": state.get("retry_count", 0) + 1
+        "retry_count": (
+            state.get("retry_count", 0) + 1
+            if not review.approved
+            else state.get("retry_count", 0)
+        )
     }
     
 

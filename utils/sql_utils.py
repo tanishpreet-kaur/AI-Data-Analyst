@@ -2,6 +2,7 @@ import re
 import sqlite3
 from database.create_schema import get_connection
 from langchain.tools import tool
+from langfuse import observe
 
 FORBIDDEN = {
     "DROP",
@@ -14,10 +15,11 @@ FORBIDDEN = {
     "REPLACE",
 }
 def clean_sql(sql: str) -> str:
-    sql = re.sub(r"```sql", "", sql, flags=re.IGNORECASE)
-    sql = re.sub(r"```", "", sql)
+    sql = sql.strip()
+    sql = re.sub(r"^```sql\s*", "", sql, flags=re.IGNORECASE)
+    sql = re.sub(r"^```\s*", "", sql)
+    sql = re.sub(r"\s*```$", "", sql)
     return sql.strip()
-
 
 def validate_safe_sql(sql: str) -> None:
     sql_upper = sql.upper()
@@ -47,7 +49,7 @@ def validate_sqlite_query(sql: str) -> bool:
     finally:
         conn.close()
 
-@tool
+@observe
 def validate_query(sql: str) -> bool:
     """Validate that a SQL query is safe and syntactically correct."""
     sql = clean_sql(sql)
