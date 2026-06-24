@@ -4,8 +4,7 @@ from states.InsightReport import InsightReport
 from utils.sql_utils import clean_sql
 
 def execute_and_generate_insights(state):
-    sql_query = clean_sql(state["sql_query"])
-    query_result = execute_sql(sql_query)
+    query_result = execute_sql(state["sql_query"])
     
     insight_agent = llm.with_structured_output(InsightReport)
     report = insight_agent.invoke(
