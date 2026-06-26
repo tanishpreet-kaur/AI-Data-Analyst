@@ -1,7 +1,8 @@
 import streamlit as st
-from graph.workflow import analyst_bot
+from graph.workflow import create_analyst_bot
 import tempfile
 from langchain_community.utilities import SQLDatabase
+import plotly.io as pio
 
 # Page Config
 st.set_page_config(
@@ -38,7 +39,6 @@ st.caption("Ask questions about your data...")
 
 # Dataset Preview
 if uploaded_db:
-    # Save uploaded file temporarily
     temp_file = tempfile.NamedTemporaryFile(
         delete=False,
         suffix=".db"
@@ -49,12 +49,16 @@ if uploaded_db:
 
     db_path = temp_file.name
 
-    # Create SQLDatabase object
-    db = SQLDatabase.from_uri(
+    st.session_state.db = SQLDatabase.from_uri(
         f"sqlite:///{db_path}"
     )
 
-    st.success("Database loaded successfully!")
+    if "analyst_bot" not in st.session_state:
+        st.session_state.analyst_bot = create_analyst_bot(
+            st.session_state.db
+        )
+
+    st.success("Database loaded successfully")
 
 # Display Chat History
 for message in st.session_state.messages:
@@ -83,14 +87,26 @@ if prompt:
     with st.chat_message("assistant"):
         with st.spinner("Analyzing data..."):
             
-            response = analyst_bot.invoke({
-                "question": prompt
-            })
+            response = st.session_state.analyst_bot.invoke(
+                            {
+                                "question": prompt
+                            }
+                        )
 
             st.markdown(response["answer"])
 
             with st.expander("Insights"):
                 st.markdown(response["key_findings"])
+
+            if response.get("chart_json"):
+                fig = pio.from_json(
+                    response["chart_json"]
+                )
+
+                st.plotly_chart(
+                    fig,
+                    use_container_width=True
+                )
 
             assistant_message = {
                 "role": "assistant",

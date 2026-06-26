@@ -1,5 +1,6 @@
 from agents.review_agent import review_agent
 from langgraph.graph import END
+import json
 
 def review_sql(state):
     review = review_agent.invoke(
@@ -18,24 +19,23 @@ def review_sql(state):
                     ]
                 }
             )
-
-    review = review["structured_response"]
+    
+    review = json.loads(review["messages"][-1].content)
 
     return {
-        "approved": review.approved,
-        "review_reason": review.reason,
+        "approved": review["approved"],
+        "review_reason": review["reason"],
         "sql_query": (
-            review.corrected_sql
-            if review.corrected_sql
+            review["corrected_sql"]
+            if review["corrected_sql"]
             else state["sql_query"]
         ),
         "retry_count": (
             state.get("retry_count", 0) + 1
-            if not review.approved
+            if not review["approved"]
             else state.get("retry_count", 0)
         )
     }
-    
 
     
 def route_after_review(state):

@@ -1,58 +1,12 @@
-import re
-import sqlite3
-from database.create_schema import get_connection
-from langchain.tools import tool
-from langfuse import observe
+from langchain_community.agent_toolkits.sql.toolkit import SQLDatabaseToolkit
 
-FORBIDDEN = {
-    "DROP",
-    "DELETE",
-    "UPDATE",
-    "INSERT",
-    "ALTER",
-    "TRUNCATE",
-    "CREATE",
-    "REPLACE",
-}
-def clean_sql(sql: str) -> str:
-    sql = sql.strip()
-    sql = re.sub(r"^```sql\s*", "", sql, flags=re.IGNORECASE)
-    sql = re.sub(r"^```\s*", "", sql)
-    sql = re.sub(r"\s*```$", "", sql)
-    return sql.strip()
+def create_sql_tools(db, llm):
+    toolkit = SQLDatabaseToolkit(
+        db=db,
+        llm=llm
+    )
 
-def validate_safe_sql(sql: str) -> None:
-    sql_upper = sql.upper()
-    for keyword in FORBIDDEN:
-        if keyword in sql_upper:
-            raise ValueError(
-                f"Forbidden SQL keyword detected: {keyword}"
-            )
-    if not sql_upper.startswith(("SELECT", "WITH")):
-        raise ValueError(
-            "Only SELECT and WITH queries are allowed"
-        )
-
-
-def validate_sqlite_query(sql: str) -> bool:
-    """Validate SQL syntax and schema using SQLite."""
-    conn = get_connection()
-    try:
-        conn.execute(
-            f"EXPLAIN QUERY PLAN {sql}"
-        )
-        return True
-    except sqlite3.Error as e:
-        raise ValueError(
-            f"Invalid SQL: {e}"
-        )
-    finally:
-        conn.close()
-
-@observe
-def validate_query(sql: str) -> bool:
-    """Validate that a SQL query is safe and syntactically correct."""
-    sql = clean_sql(sql)
-    validate_safe_sql(sql)
-    validate_sqlite_query(sql)
-    return True
+    return {
+        tool.name: tool
+        for tool in toolkit.get_tools()
+    }

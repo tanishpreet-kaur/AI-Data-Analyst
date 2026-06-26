@@ -1,15 +1,19 @@
-from agents.sql_agent import sql_agent
+def create_generate_sql_node(sql_agent):
 
-def generate_sql(state):
-    response = sql_agent.invoke({
-        "messages": [
+    def generate_sql(state):
+        response = sql_agent.invoke(
             {
-                "role": "user",
-                "content": state["question"]
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": state["question"]
+                    }
+                ]
             }
-        ]
-    })
-    sql = response["messages"][-1].content
-    return {
-        "sql_query": sql
-    }
+        )
+
+        return {
+            "sql_query": response["messages"][-1].content
+        }
+
+    return generate_sql
