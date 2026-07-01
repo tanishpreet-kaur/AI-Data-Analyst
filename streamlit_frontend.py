@@ -3,6 +3,10 @@ from graph.workflow import create_analyst_bot
 import tempfile
 from langchain_community.utilities import SQLDatabase
 import plotly.io as pio
+import uuid
+
+if "thread_id" not in st.session_state:
+    st.session_state.thread_id = str(uuid.uuid4())
 
 # Page Config
 st.set_page_config(
@@ -90,13 +94,15 @@ if prompt:
             response = st.session_state.analyst_bot.invoke(
                             {
                                 "question": prompt
+                            },
+                            config={
+                                "configurable": {
+                                    "thread_id": st.session_state.thread_id
+                                }
                             }
                         )
 
             st.markdown(response["answer"])
-
-            with st.expander("Insights"):
-                st.markdown(response["key_findings"])
 
             if response.get("chart_json"):
                 fig = pio.from_json(

@@ -7,6 +7,7 @@ from nodes.visualisation_node import visualisation_node
 from utils.sql_utils import create_sql_tools
 from model.llm import llm
 from agents.sql_agent import create_sql_agent
+from langgraph.checkpoint.sqlite import SqliteSaver
 
 def create_analyst_bot(db):
     sql_tools = create_sql_tools(
@@ -41,7 +42,11 @@ def create_analyst_bot(db):
             "execute_and_insight": "execute_and_insight",
         }
     )
-    graph.add_edge("execute_and_insight", "visualisation_node")
-    graph.add_edge("visualisation_node", END)
+    #graph.add_edge("execute_and_insight", "visualisation_node")
+    #graph.add_edge("visualisation_node", END)
+    
+    memory = SqliteSaver.from_conn_string(
+    "checkpoints.db"
+)
 
-    return graph.compile()
+    return graph.compile(checkpointer=memory)

@@ -20,23 +20,22 @@ def review_sql(state):
                 }
             )
     
-    review = json.loads(review["messages"][-1].content)
-
+    review = review["structured_response"]
+    
     return {
-        "approved": review["approved"],
-        "review_reason": review["reason"],
+        "approved": review.approved,
+        "review_reason": review.reason,
         "sql_query": (
-            review["corrected_sql"]
-            if review["corrected_sql"]
+            review.corrected_sql
+            if review.corrected_sql
             else state["sql_query"]
         ),
         "retry_count": (
             state.get("retry_count", 0) + 1
-            if not review["approved"]
+            if not review.approved
             else state.get("retry_count", 0)
         )
     }
-
     
 def route_after_review(state):
     if state["approved"]:

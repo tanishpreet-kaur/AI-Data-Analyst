@@ -9,5 +9,5 @@ from langchain_openai import ChatOpenAI
 llm = ChatOpenAI(
     base_url="https://openrouter.ai/api/v1",
     api_key=OPENROUTER_API_KEY,
-    model_name="openrouter/owl-alpha"
+    model_name="openai/gpt-oss-120b:free"
 )
